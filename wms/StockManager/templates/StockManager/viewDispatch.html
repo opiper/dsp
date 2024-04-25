@@ -1,0 +1,74 @@
+{% extends "warehouse/base.html" %}{% block title %} View All Changes {% endblock %}
+
+{% block content %}
+
+
+<div class="col-md-7 mx-auto">
+    <br>
+    <table class="table table-hover table-sm table-bordered" border= 2 id="table">
+        <thead>
+            <tr>
+                <th> Product ID </th>
+                <th> Company </th>
+                <th> Date Out </th>
+                <th> Tracking Code </th>
+                <th> Agent </th>
+                <th> Courier </th>
+                <th> Quantity </th>
+            </tr>
+        </thead>
+        <tbody class = "table-group-divider">
+            
+        </tbody>
+    </table>
+</div>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link rel="stylesheet" 
+href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></style>
+<script type="text/javascript" 
+src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" 
+src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script>
+   $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+          }
+      }
+  });
+
+  $(document).ready(function(){
+      $('#table').dataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": "viewDispatches",
+            "type": "GET",
+            "dataSrc": "data",
+        },
+        "columns": [  // Define columns to match the data structure from your AJAX response
+            {"data": "products", "render": function(data, type, row) {
+                // Aggregate product IDs into a string; adjust based on your actual data structure
+                return data.map(product => product.product).join(" - ");
+            }},
+            {"data": "products", "render": function(data, type, row) {
+                // Aggregate companies into a string; adjust accordingly
+                return data.map(product => product.company).join(" - ");
+            }},
+            {"data": "dateSent"},
+            {"data": "tracking"},
+            {"data": "agent"},
+            {"data": "courierOption"},
+            {"data": "products", "render": function(data, type, row) {
+                // Aggregate quantities into a string; adjust as needed
+                return data.map(product => product.quantity).join(" - ");
+            }},
+        ]
+    });
+  });
+</script>
+
+{% endblock %}

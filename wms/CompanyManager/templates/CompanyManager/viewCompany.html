@@ -1,0 +1,60 @@
+{% extends "warehouse/base.html" %}{% block title %} View Customer {% endblock %}
+
+{% block content %}
+
+<br>
+
+<div class="col-md-7 mx-auto" id="ifCustomer">
+    <input class="form-control" type="text" id="customerSearch" onkeyup="customerFunction()" placeholder="Search for Customer...">
+</div>
+
+<form action = '/viewIndvCompany' method = 'POST' >
+    {% csrf_token %}
+    <div class="col-md-7 mx-auto">
+        <br>
+        <table class="table table-hover table-sm" border= 2 id="table">
+            <tr>
+                <th> Company Name </th>
+                <th> Director's Name </th>
+                <th> <br> </th>
+                <th> <br> </th>
+            </tr>
+            {% for customer in results %}
+            <tr>
+                <td><br> {{customer.companyName}} </td>
+                <td><br> {{customer.directorName}} </td>
+                <td><br> <button type="submit" name = 'customerId' value = '{{customer.id}}' class="btn btn-primary">View Details</button> </td>
+                <td><br> <a href="/viewCompanyStock?id={{customer.id}}"><button type="button" class="btn btn-primary">View Stock</button></a> </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</form>
+
+
+
+<script>
+    function customerFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("customerSearch");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("table");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } 
+            else {
+                tr[i].style.display = "none";
+            }
+            }
+        }
+    }
+</script>
+{% endblock %}

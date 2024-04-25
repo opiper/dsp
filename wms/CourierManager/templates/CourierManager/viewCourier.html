@@ -1,0 +1,43 @@
+{% extends "warehouse/base.html" %}{% block title %} View Couriers {% endblock %}
+
+{% block content %}
+<br>
+<a href="{% url 'addCourier' %}"><button class="btn btn-primary">New Courier</button></a>
+<br>
+<form action="/viewCourierOption" method="POST">
+    {% csrf_token %}
+    <div class="col-md-7 mx-auto">
+        <table class="table table-hover table-sm table-bordered" border=2 id="table">
+            <thead>
+                <tr>
+                    <th> Courier name </th>
+                    <th>  </th>
+                </tr>
+            </thead>
+            <tbody class = "table-group-divider">
+                {% for courier in couriers %}
+                <tr>
+                    <td><br> {{courier.name}} </td>
+                    <td><br> <button type="submit" name = 'courierId' value = '{{courier.id}}' class="btn btn-primary">View Options</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</form>
+<br>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link rel="stylesheet" 
+href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></style>
+<script type="text/javascript" 
+src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" 
+src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script>
+  $(document).ready(function(){
+      $('#table').dataTable();
+  });
+</script>
+
+{% endblock %}

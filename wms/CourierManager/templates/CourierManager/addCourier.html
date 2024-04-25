@@ -1,0 +1,15 @@
+{% extends "warehouse/base.html" %}{% block title %} Add Courier {% endblock %}
+
+{% block content %}
+
+<form action="/addCourier" method="POST">
+    {% csrf_token %}
+    <div class="col-md-7 mx-auto">
+        <br>
+        <input class="form-control" type="text" placeholder="Courier Name" name="courierName"/>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+{% endblock %}

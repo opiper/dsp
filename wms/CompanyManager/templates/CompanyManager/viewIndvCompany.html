@@ -1,0 +1,58 @@
+{% extends "warehouse/base.html" %}{% block title %} Edit Customer {% endblock %}
+
+{% block content %}
+
+<div class="col-md-7 mx-auto">
+    <form action="/deleteCompany" method="POST">
+        {% csrf_token %}
+        <br>
+        <table class="table table-hover table-sm table-bordered" border= 2>
+            <tr>
+                <th>Company Name</th>
+                <td>{{company.companyName}}</td>
+            </tr>
+            <tr>
+                <th>Company Code</th>
+                <td>{{company.companyCode}}</td>
+            </tr>
+            <tr>
+                <th>Company Address</th>
+                <td>{{company.companyAddress}}</td>
+            </tr>
+            <tr>
+                <th>Director's Name</th>
+                <td>{{company.directorName}}</td>
+            </tr>
+            <tr>
+                <th>Email Address</th>
+                <td>{{company.email}}</td>
+            </tr>
+            <tr>
+                <th>WeChat</th>
+                <td>{{company.weChat}}</td>
+            </tr>
+            <tr>
+                <th>Phone Number</th>
+                <td>{{company.phoneNumber}}</td>
+            </tr>
+            <tr>
+                <th>VAT Number</th>
+                <td>{{company.vatNumber}}</td>
+            </tr>
+            <tr>
+                <th>Business Licence</th>
+                {% if company.businessLicence == '' %}
+                    <td>None</td>
+                {% else %}
+                    <td><a href="{{company.businessLicence.url}}" class="btn btn-primary">View</a></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th>Delete</th>
+                <td><button type="submit" name = 'companyId' value = '{{company.id}}' class="btn btn-primary">Delete</button></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+{% endblock %}

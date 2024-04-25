@@ -1,0 +1,62 @@
+{% extends "warehouse/base.html" %}{% block title %} Customer Home {% endblock %}
+
+{% block content %}
+
+<br>
+Welcome {{user.username}}
+
+<br>
+
+<div class="col-md-7 mx-auto" id="ifProduct">
+    <input class="form-control" type="text" id="productSearch" onkeyup="productFunction()" placeholder="Search for Product...">
+</div>
+
+<br>
+<div class="col-md-7 mx-auto">
+    <table class="table table-hover table-sm table-bordered" border= 2 id="table">
+        <thead>
+            <tr>
+              <th> Product ID </th>
+              <th> SKU Quantity </th>
+              <th> Carton Quantity </th>
+              <th> Pallet Quantity </th>
+            </tr>
+        </thead>
+        <tbody class = "table-group-divider">
+          {% for product in results %}
+            <tr>
+              <td><br> {{product.productId}} </td>
+              <td><br> {{product.skuQuantity}} </td>
+              <td><br> {{product.cartonQuantity}} </td>
+              <td><br> {{product.palletQuantity}} </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function productFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("productSearch");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("table");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+{% endblock %}

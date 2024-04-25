@@ -1,0 +1,34 @@
+{% extends "warehouse/base.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+
+<br>
+Welcome {{user.username}}
+
+<br>
+<div class="col-md-7 mx-auto">
+    <table class="table table-hover table-sm table-bordered table-striped" border=2 id="table">
+        <thead>
+            <tr>
+                <th> Product ID </th>
+                <th> Customer </th>
+                <th> Type </th>
+                <th> Quantity </th>
+                <th> Location </th>
+                <th> Manage </th>
+                <th> Service </th>
+            </tr>
+        </thead>
+        <tbody class = "table-group-divider">
+
+        </tbody>
+    </table>
+</div>
+
+
+{% load static %}
+<script src="{% static 'scripts.js' %}" defer></script>
+
+{% endblock %}

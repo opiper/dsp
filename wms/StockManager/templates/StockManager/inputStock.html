@@ -1,0 +1,18 @@
+{% extends "warehouse/base.html" %}{% block title %} Input Stock {% endblock %}
+
+{% block content %}
+
+<form action="/inputStock" method='POST'>
+    {% csrf_token %}
+    <div class="col-md-7 mx-auto">
+        <br>
+        Enter the number of incoming stock:
+        <br>
+        <input class = 'form-control' type = 'number' placeholder = 'Quantity' name = 'quantity' min="1"/>
+        <br>
+        <input class = 'form-control' type = 'hidden' value="{{ stock.id }}" name = 'id' />
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "warehouse/base.html" %}{% block title %} View Courier Options {% endblock %}
+
+{% block content %}
+
+<br>
+<a href="addCourierOption?id={{courierId}}"><button class="btn btn-primary">New Option</button></a>
+<br>
+<div class="col-md-7 mx-auto">
+    <table class="table table-hover table-sm table-bordered" border=2 id="table">
+        <thead>
+            <tr>
+                <th> Box </th>
+                <th> Price </th>
+                <th> Dropship </th>
+                <th> Envelope </th>
+                <th> Final Price </th>
+            </tr>
+        </thead>
+        <tbody class = "table-group-divider">
+            {% for option in courierOptions %}
+                <tr>
+                    <td><br> {{option.get_box_display}} </td>
+                    <td><br> {{option.get_price_display}} </td>
+                    <td><br> {{option.dropship}} </td>
+                    <td><br> {{option.envelope}} </td>
+                    <td><br> £{{option.finalPrice|floatformat:2}} </td>
+                </tr>
+            {% endfor %}
+        <tbody>
+    </table>
+</div>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link rel="stylesheet" 
+href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></style>
+<script type="text/javascript" 
+src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" 
+src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script>
+  $(document).ready(function(){
+      $('#table').dataTable();
+  });
+</script>
+{% endblock %}

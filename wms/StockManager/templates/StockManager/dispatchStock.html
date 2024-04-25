@@ -1,0 +1,172 @@
+{% extends "warehouse/base.html" %}
+
+{% block title %} Dispatch Stock {% endblock %}
+
+{% block content %}
+
+<style>
+    #newinput {
+        margin-left: -15px; /* Adjust the margin to align with the add button */
+    }
+</style>
+
+<form action="/dispatchStock" method='POST'>
+    {% csrf_token %}
+    <div class="col-md-7 mx-auto">
+        <div id="newinput">
+            <div class="row">
+                <!-- Initial product selection row -->
+                <div class="input-group m-3 custom-input">
+                    <select class="form-control m-input select2" name="static_dropdown" style="width: 100%;" readonly>
+                        <option value="{{ogProduct.id}}">{{ogProduct.productId}} - {{ogProduct.company.companyName}}</option>
+                    </select>
+                    <input type="number" name="static_quantity" class="form-control m-input" style="width: 30%;" placeholder="Quantity" min="1">
+                </div>
+            </div>
+        </div>
+        <!-- Button to add new product selection row -->
+        <button id="rowAdder" type="button" class="btn btn-primary">
+            <span class="bi bi-plus-square-dotted"></span> ADD
+        </button>
+
+        <br><br>
+        <!-- Courier selection and dispatch form -->
+        Select Courier:
+        <select class='form-control' id='courier' name='courier'>
+            <option value = '' selected disabled>Please Select a Courier Option</option>
+            {% for option in courierOptions %}
+                <option value='{{option.id}}'>{{option.courier.name}}, {{option.get_box_display}}, 
+                    {{option.get_price_display}}{%if option.dropship == True%}, Dropship{%endif%}
+                    {%if option.envelope == True%}, Envelope{%endif%}, £{{option.finalPrice}} </option>
+            {% endfor %}
+        </select>
+        <br>
+        Tracking Number:
+        <input class='form-control' type='text' placeholder='Tracking Number' name='tracking'/>
+        <br>
+        Number Of Boxes:
+        <input class='form-control' type='number' placeholder='Number of Boxes' name='noOfBoxes' min="1" step="1"/>
+        <br>
+        <!-- Option to override per box price -->
+        Overide Per Box Price?
+        <input class="form-check-input" type="radio" name="search" id="product" checked onclick="BoxHide()">
+        <label class="form-check-label" for="product">
+        No
+        </label>
+        <input class="form-check-input" type="radio" name="search" id="customer" onclick="BoxShow()">
+        <label class="form-check-label" for="customer">
+        Yes
+        </label>
+        <br>
+        <!-- Input for overridden per box fee -->
+        <input id="boxFee" class='form-control' type='number' placeholder='Per Box Fee' name='boxFee' min="0.01" step="0.01"/>
+        <br>
+        <input type="hidden" name="stockType" value="SK">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+<!-- Include Select2 library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<!-- jQuery -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Initialize Select2 and handle row addition/deletion -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+    // Add new product selection row
+    $("#rowAdder").click(function () {
+        var options = getAvailableOptions();
+        var newRowAdd =
+            '<div class="row"> <div class="input-group m-3 custom-input">' +
+            '<div class="input-group-prepend">' +
+            '<button class="btn btn-danger delete-row" type="button">' +
+            '<i class="bi bi-trash"></i> Delete</button> </div>' +
+            '<select name="dynamic_dropdown[]" class="form-control m-input select2" style="width: 100%;">' +
+            options +
+            '</select>' +
+            '<input type="number" name="dynamic_quantity[]" class="form-control m-input" style="width: 30%;" placeholder="Quantity">' +
+            '</div> </div>';
+
+        $('#newinput').append(newRowAdd);
+        updateDeleteButtons();
+
+        // Initialize Select2 for the newly added dropdown
+        $('.select2').select2();
+    });
+
+    $("body").on("click", ".delete-row", function () {
+        var deletedValue = $(this).closest(".row").find(".select2").val();
+        var deletedText = $(this).closest(".row").find(".select2 option:selected").text();
+        $(this).closest(".row").remove();
+        updateDeleteButtons();
+        updateAvailableOptions(deletedValue, deletedText);
+
+        // Re-initialize Select2 for all dropdowns after updating options
+        $('.select2').select2();
+    });
+    
+     // Update the state of delete buttons based on the number of rows
+    function updateDeleteButtons() {
+        var rows = $(".row");
+        $(".delete-row").prop("disabled", rows.length <= 1);
+    }
+
+     // Get available product options to populate dropdowns
+    function getAvailableOptions() {
+        var selectedOptions = [];
+        $(".select2").each(function () {
+            var selectedValue = $(this).val();
+            if (selectedValue) {
+                selectedOptions.push(selectedValue);
+            }
+        });
+
+        var allOptions = [
+            {% for product in productList %}
+            { id: "{{ product.id }}", value: "{{ product.productId }} - {{ product.company.companyName }}" },
+            {% endfor %}
+        ];
+
+        var availableOptions = allOptions.filter(function (option) {
+        return !selectedOptions.includes(option.id);
+        });
+
+        return availableOptions.map(function (option) {
+            return '<option value="' + option.id + '">' + option.value + '</option>';
+        }).join('');
+    }
+
+    // Update available options when a row is deleted
+    function updateAvailableOptions(deletedValue, deletedText) {
+        // Update options for all existing dropdowns excluding the readonly dropdown
+        $(".select2:not([readonly])").each(function () {
+            if (deletedValue && !$(this).find('option[value="' + deletedValue + '"]').length) {
+                // Add the deleted option back to the options only if it doesn't exist
+                $(this).append('<option value="' + deletedValue + '">' + deletedText + '</option>');
+            }
+        });
+    }
+
+    // Initialize Select2 for the initial dropdown
+    $('.select2').select2();
+</script>
+
+<!-- Toggle visibility of overridden per box fee input -->
+<script>
+
+window.onload = function(){
+    document.getElementById('boxFee').style.display = 'none';
+}
+
+function BoxHide() {
+    document.getElementById('boxFee').style.display = 'none';
+}
+function BoxShow() {
+    document.getElementById('boxFee').style.display = 'block';
+}
+
+</script>
+
+{% endblock %}

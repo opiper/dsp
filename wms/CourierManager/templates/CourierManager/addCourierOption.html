@@ -1,0 +1,35 @@
+{% extends "warehouse/base.html" %}{% block title %} Add Courier Options {% endblock %}
+
+{% block content %}
+
+<form action = '/addCourierOption' method = 'POST'>
+    {% csrf_token %}
+    <div class="col-md-7 mx-auto">
+        <br>
+        {% for field in form %}
+            {{field.label}}
+            {% if field.name == 'box' %}
+                {% for radio in field %}
+                    <div class="form-check">
+                        {{ radio.tag }}
+                        <label class="form-check-label">{{radio.choice_label}}</label>
+                    </div>
+                {% endfor %}
+            {% elif field.name == 'price' %}
+                {% for radio in field %}
+                    <div class="form-check">
+                        {{ radio.tag }}
+                        <label class="form-check-label">{{radio.choice_label}}</label>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {{field}}
+            {% endif %}
+            <br>
+        {% endfor %}
+        <input type="hidden" value="{{courierId}}" name="courierId">
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </div>
+</form>
+
+{% endblock %}

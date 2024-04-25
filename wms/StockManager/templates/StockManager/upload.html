@@ -1,0 +1,15 @@
+{% extends "warehouse/base.html" %}{% block title %} Upload Template {% endblock %}
+
+{% block content %}
+
+<br>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-check">
+        {% csrf_token %}
+        {{ form.as_p }}
+    </div>
+    <button class="btn btn-primary" type="submit">Upload</button>
+</form>
+
+{% endblock %}

@@ -90,12 +90,12 @@ class EpsilonGreedyPolicy(object):
         if np.random.rand() < self.epsilon:
             action = np.random.randint(self.action_spec.minimum, self.action_spec.maximum + 1)
         else:
-            action_step = policy.action(time_step)
+            action_step = policy.action(time_step, policy)
             action = action_step.action.numpy()
         self.epsilon = max(self.epsilon_end, self.epsilon - self.decay_rate)
         return action
 
-item_sizes_queue = np.random.randint(1, 4, size=100).tolist()
+item_sizes_queue = np.random.randint(1, 4, size=40).tolist()
 # Convert the gym environment to a TF-Agents environment
 gym_env = WarehouseEnv(width=5, height=5, cell_size=5, item_sizes_queue=item_sizes_queue)
 wrapped_env = gym_wrapper.GymWrapper(gym_env)
@@ -130,13 +130,11 @@ replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
     max_length=100000)
 
 # Collect Data (Exploration Policy)
-epsilon_greedy_policy = EpsilonGreedyPolicy(epsilon_start, epsilon_end, epsilon_decay_steps, env.action_spec())
-# random_policy = random_tf_policy.RandomTFPolicy(env.time_step_spec(), env.action_spec())
+random_policy = random_tf_policy.RandomTFPolicy(env.time_step_spec(), env.action_spec())
 def collect_step(environment, policy, buffer):
     time_step = environment.current_time_step()
-    action = policy.action(time_step, agent.policy)
-    next_time_step = environment.step(action)
-    action_step = tf_agents.trajectories.PolicyStep(action=tf.convert_to_tensor([action]), state=(), info=())
+    action_step = policy.action(time_step)
+    next_time_step = environment.step(action_step.action)
     traj = trajectory.from_transition(time_step, action_step, next_time_step)
     buffer.add_batch(traj)
 
@@ -144,7 +142,7 @@ def collect_data(env, policy, buffer, steps):
     for _ in range(steps):
         collect_step(env, policy, buffer)
 
-collect_data(env, epsilon_greedy_policy, replay_buffer, steps=100)
+collect_data(env, random_policy, replay_buffer, steps=100)
 
 # Dataset generates trajectories with shape [Bx2x...]
 dataset = replay_buffer.as_dataset(
@@ -183,5 +181,13 @@ for _ in range(num_episodes):
     total_reward += episode_reward
 avg_reward = total_reward / num_episodes
 print('Average Reward = {0}'.format(avg_reward))
-
+# After the evaluation loop
+if gym_env.item_sizes_queue:  # Check if there are unplaced items
+    print("Unplaced Item Sizes:", gym_env.item_sizes_queue)
+else:
+    print("All items were placed successfully.")
+count = 0
+for i in gym_env.placement_record:
+    count += 1
+print(f"No. of items placed: {count}")
 gym_env.display_grid()

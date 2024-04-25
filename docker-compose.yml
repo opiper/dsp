@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8.0.11
+    container_name: wms_db
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    command: bash -c  "dockerize -wait tcp://db:3306 -timeout 30s python manage.py makemigrations && python manage.py migrate && python manage.py createsuperuserifnone && python manage.py runserver 0.0.0.0:8000"
+    container_name: wms
+    volumes:
+      - ./wms:/app
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_HOST: db
+    env_file:
+      - ./.env
+    restart: unless-stopped

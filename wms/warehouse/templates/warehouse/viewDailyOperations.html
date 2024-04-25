@@ -1,0 +1,55 @@
+{% extends "warehouse/base.html" %}{% block title %} View Daily Operations {% endblock %}
+
+{% block content %}
+<br>
+
+<div class="col-md-7 mx-auto">
+    <form action="/viewDailyOperations" method="POST">
+        {% csrf_token %}
+        <input class="form-control" type="date" name="date" value="{{date}}">
+        <br>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+</div>
+
+<br>
+<div class="col-md-7 mx-auto">
+    <table class="table table-hover table-sm table-bordered table-striped" border=2 id="table">
+        <thead>
+            <tr>
+                <th> Change </th>
+                <th> Product ID </th>
+                <th> Quantity </th>
+                <th> Date </th>
+            </tr>
+        </thead>
+        <tbody class = "table-group-divider">
+            {% for operation in results %}
+            <tr>
+                <td><br> {{ operation.serviceType.name | default:'Stock Change' }}</td>
+                <td><br> {%if operation.product.productId == None%} {{operation.stock.productId}} {% else %} {{operation.product.productId}} {% endif %}</td>
+                <td><br> {% if operation.category == None or operation.category == 'I' %} {{operation.quantity}} {% elif operation.category == 'O' %} -{{operation.quantity}} {% endif %}</td>
+                <td><br> {{operation.date}} </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link rel="stylesheet" 
+href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></style>
+<script type="text/javascript" 
+src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" 
+src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script>
+  $(document).ready(function(){
+      $('#table').dataTable({
+        "order":[1,'asc']
+    });
+  });
+</script>
+
+{% endblock %}

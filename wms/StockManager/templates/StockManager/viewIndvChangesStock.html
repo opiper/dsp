@@ -1,0 +1,60 @@
+{% extends "warehouse/base.html" %}{% block title %} View Individual Stock Changes {% endblock %}
+
+{% block content %}
+
+
+<div class="col-md-7 mx-auto">
+    <br>
+    <b style="border-right:18px solid #c3e6cb;"></b>Incoming Stock
+    <br>
+    <b style="border-right:18px solid #f5c6cb;"></b>Outgoing Stock
+    <br>
+    <br>
+    <table class="table table-hover table-sm table-bordered" border= 2 id="table">
+        <thead>
+            <tr>
+                <th> Product ID </th>
+                <th> Date </th>
+                <th> Agent </th>
+                <th> Quantity Changed </th>
+            </tr>
+        </thead>
+        <tbody class = "table-group-divider">
+            {% for change in changes %}
+                {% if change.category == 'O' %}
+                    <tr class="table-danger">
+                        <td><br> {{change.product.productId}} </td>
+                        <td><br> {{change.date|date:'d/m/Y'}} </td>
+                        <td><br> {{change.agent}} </td>
+                        <td><br> {{change.quantity}} </td>
+                    </tr>
+                {% endif %}
+                {% if change.category == 'I' %}
+                    <tr class="table-success">
+                        <td><br> {{change.product.productId}} </td>
+                        <td><br> {{change.date|date:'d/m/Y'}} </td>
+                        <td><br> {{change.agent}} </td>
+                        <td><br> {{change.quantity}} </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<link rel="stylesheet" 
+href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></style>
+<script type="text/javascript" 
+src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" 
+src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script>
+  $(document).ready(function(){
+      $('#table').dataTable( {
+        ordering: false
+  });
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "warehouse/base.html" %}{% block title %} View Service History Stock {% endblock %}
+
+{% block content %}
+
+{% load multiply %}
+
+<br>
+<div class="col-md-7 mx-auto">
+    <table class="table table-hover table-sm table-bordered" border= 2 id="table">
+        <thead>
+            <tr>
+                <th> Service Type </th>
+                <th> Agent </th>
+                <th> Date </th>
+                <th> Quantity </th>
+                <th> Cost </th>
+                <th> Details </th>
+            </tr>
+        </thead>
+        <tbody class = "table-group-divider">
+            {% for service in services %}
+            <tr>
+                <td> {{service.serviceType.name}} </td>
+                <td> {{service.agent}} </td>
+                <td> {{service.date|date:'d/m/Y'}} </td>
+                <td> {{service.quantity}} </td>
+                <td> £{% multiply service.quantity service.serviceType.unitPrice %} </td>
+                <td> <button class="btn btn-primary">Details</button> </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

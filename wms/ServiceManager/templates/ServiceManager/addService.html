@@ -1,0 +1,17 @@
+{% extends "warehouse/base.html" %}{% block title %} Add Service {% endblock %}
+
+{% block content %}
+
+<form action="/addService" method="POST">
+    {% csrf_token %}
+    <div class="col-md-7 mx-auto">
+        <br>
+        <input class="form-control" type="text" placeholder="Service Name" name="name"/>
+        <br>
+        <input class="form-control" type="number" placeholder="Price" name="price"/>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+{% endblock %}

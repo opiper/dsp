@@ -1,0 +1,41 @@
+{% extends "warehouse/base.html" %}{% block title %} Add Stock {% endblock %}
+
+{% block content %}
+<form action = '/addStock' method = 'POST'>
+    {% csrf_token %}
+    <div class="col-md-7 mx-auto">
+        <br>
+        {% for field in form %}
+            {{field.label}}
+            {% if field.name == 'stockType' %}
+                {% for radio in field %}
+                    <div class="form-check">
+                        {{ radio.tag }}
+                        <label class="form-check-label">{{radio.choice_label}}</label>
+                    </div>
+                {% endfor %}
+            {% elif field.name == 'size' %}
+                {% for radio in field %}
+                    <div class="form-check">
+                        {{ radio.tag }}
+                        <label class="form-check-label">{{radio.choice_label}}</label>
+                    </div>
+                {% endfor %}
+            {% elif field.name == 'category' %}
+                {% for radio in field %}
+                    <div class="form-check">
+                        {{ radio.tag }}
+                        <label class="form-check-label">{{radio.choice_label}}</label>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {{ field }}
+            {% endif %}
+            <br>
+        {% endfor %}
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </div>
+</form>
+
+
+{% endblock %}

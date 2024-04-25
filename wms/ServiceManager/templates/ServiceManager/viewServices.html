@@ -1,0 +1,30 @@
+{% extends "warehouse/base.html" %}{% block title %} View Services {% endblock %}
+
+{% block content %}
+<br>
+<a href="{% url 'addService' %}"><button class="btn btn-primary">New Service</button></a>
+<br>
+<div class="col-md-7 mx-auto">
+    <table class="table table-hover table-sm table-bordered" border=2 id="table">
+        <thead>
+            <tr>
+                <th> Service Name </th>
+                <th> Unit Price </th>
+                <th> Edit </th>
+            </tr>
+        </thead>
+        <tbody class = "table-group-divider">
+            {% for service in services %}
+            <tr>
+                <td><br> {{service.name}} </td>
+                <td><br> £{{service.unitPrice|floatformat:2}} </td>
+                <td><br><a href="/editServices?id={{service.id}}"><input type="button" class="btn btn-primary" value="Edit"></a></td>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+
+{% endblock %}
